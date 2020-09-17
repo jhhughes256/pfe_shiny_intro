@@ -1,0 +1,53 @@
+# server.r (Reactive Server Objects) ------------------------------------------
+# All reactive components of your application are specified here. This is any
+#   code from your original script that depends on the inputs that were
+#   identified.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+app_server <- function(input, output) {
+  
+# Define basic server setup, with all reactive code in a renderPlot function
+  output$pkplot <- renderPlot({
+  # Simulation Inputs (inputs)
+  # Many of these are left hard-coded until UI is updated to provide the values
+  # Note that input$DOSEFRQ is converted to a number with as.double, this is due
+  #   to selectInput providing values of the character type.
+    NID <- 1
+    DOSEAMT <- input$DOSEAMT
+    DOSEFRQ <- as.double(input$DOSEFRQ)  # convert from character
+    DOSEDUR <- input$DOSEDUR
+    COVBWT <- 70
+    COVSEX <- 0
+  # Modify Simulation Conditions (reactive) 
+    if (NID > 1) {
+      simmod <- mod %>%
+        omat(diag(c(0.1, 0.1, 0.2, 0.2))) %>%
+        smat(matrix(0.1))
+    } else {
+      simmod <- mod
+    }
+  # Simulation Code (reactive)
+    dosetimes <- seq(0, 24*(DOSEDUR), by = DOSEFRQ)
+    simdf <- simmod %>%
+      param(WT = COVBWT, SEX = COVSEX) %>%
+      ev(amt = rep(DOSEAMT, length(dosetimes)), time = dosetimes) %>%
+      carry_out(amt, evid) %>%
+      mrgsim_df(nid = NID, start = 0, end = 24*(DOSEDUR + 1), delta = 0.5) %>%
+      as_tibble()
+  # Script Outputs 
+    p <- NULL
+    p <- ggplot(aes(x = time, y = CP), data = simdf)
+    if (NID == 1) {
+      p <- p + geom_line(colour = "blue", size = 1)
+    } else {
+      p <- p + stat_summary(geom = "line", fun.y = median, colour = "blue", size = 1)
+      p <- p + stat_summary(geom = "ribbon", fun.ymin = ci90lo, fun.ymax = ci90hi,
+        alpha = 0.4, fill = "blue")
+    }
+    p <- p + labs(x = "Time (hours)", y = "Concentration (ng/mL)")
+    p <- p + scale_x_continuous(breaks = 0:(DOSEDUR + 1)*24)
+    p
+  })
+  
+}  # app_server
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
