@@ -27,7 +27,7 @@ app_server <- function(input, output) {
       simmod <- mod
     }
   # Simulation Code (reactive)
-    dosetimes <- seq(0, 24*(DOSEDUR), by = DOSEFRQ)
+    dosetimes <- seq(0, 24*(DOSEDUR - 1), by = DOSEFRQ)
     simdf <- simmod %>%
       param(WT = COVBWT, SEX = COVSEX) %>%
       ev(amt = rep(DOSEAMT, length(dosetimes)), time = dosetimes) %>%

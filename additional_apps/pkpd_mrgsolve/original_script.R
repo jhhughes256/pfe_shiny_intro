@@ -70,7 +70,7 @@
 #   SEX covariates. ev() can be provided the dosing information as well as the 
 #   number of individuals to be simulated. Here the dosing is defined based on
 #   DOSEAMT, DOSEFRQ and DOSEDUR.
-  dosetimes <- seq(0, 24*(DOSEDUR), by = DOSEFRQ)
+  dosetimes <- seq(0, 24*(DOSEDUR - 1), by = DOSEFRQ)
   simdf <- simmod %>%
     param(WT = COVBWT, SEX = COVSEX) %>%
     ev(amt = rep(DOSEAMT, length(dosetimes)), time = dosetimes) %>%
