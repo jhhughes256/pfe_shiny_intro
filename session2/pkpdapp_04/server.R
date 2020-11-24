@@ -41,11 +41,11 @@ server <- function(input, output) {
   # Define reactive object
     dosetimes <- seq(0, 24*(DOSEDUR - 1), by = DOSEFRQ)
     simdf <- simmod %>%
-    param(WT = COVBWT, SEX = COVSEX) %>%
-    ev(amt = rep(DOSEAMT, length(dosetimes)), time = dosetimes) %>%
-    carry_out(amt, evid) %>%
-    mrgsim_df(nid = NID, start = 0, end = 24*(DOSEDUR + 1), delta = 0.5) %>%
-    as_tibble()
+      param(WT = COVBWT, SEX = COVSEX) %>%
+      ev(amt = rep(DOSEAMT, length(dosetimes)), time = dosetimes) %>%
+      carry_out(amt, evid) %>%
+      mrgsim_df(nid = NID, start = 0, end = 24*(DOSEDUR + 1), delta = 0.5) %>%
+      as_tibble()
   })
   
 # Define PK plot output
