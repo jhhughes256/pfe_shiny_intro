@@ -6,9 +6,9 @@ server <- function(input, output) {
   # Define reactive object
     list(
       NID = 100,
-      DOSEAMT = input$DOSEAMT,
-      DOSEFRQ = as.integer(input$DOSEFRQ),  # convert from character to integer
-      DOSEDUR = input$DOSEDUR,
+      DOSEAMT = 100,
+      DOSEFRQ = 24,
+      DOSEDUR = 5,
       COVBWT = 70,
       COVSEX = 0
     )
@@ -32,9 +32,9 @@ server <- function(input, output) {
   Rsimdf <- reactive({
   # Read inputs  
     NID <- Rinput()$NID
-    DOSEAMT <- Rinput()$DOSEAMT
-    DOSEFRQ <- Rinput()$DOSEFRQ
-    DOSEDUR <- Rinput()$DOSEDUR
+    DOSEAMT <- input$DOSEAMT
+    DOSEFRQ <- as.integer(input$DOSEFRQ)
+    DOSEDUR <- input$DOSEDUR
     COVBWT <- Rinput()$COVBWT
     COVSEX <- Rinput()$COVSEX
     simmod <- Rmod()
@@ -52,7 +52,7 @@ server <- function(input, output) {
   output$pkplot <- renderPlot({
   # Read inputs
     NID <- Rinput()$NID
-    DOSEDUR <- Rinput()$DOSEDUR
+    DOSEDUR <- input$DOSEDUR
     simdf <- Rsimdf()
   # Define output
     p <- NULL
